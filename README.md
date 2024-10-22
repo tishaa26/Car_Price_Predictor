@@ -11,4 +11,5 @@ Project Workflow: Data Collection, Data Preprocessing, Model Development, Flask 
 - Linear Regression: Provides a simple and interpretable relationship between features and car price.
 - The model is trained using historical data of used cars and their selling prices.
 - Takes the input features and predicts the car's price.
+  
 ![Screenshot 2024-10-22 191832](https://github.com/user-attachments/assets/cf4466ed-c155-4ccf-aad3-d75bb7b6ce05)

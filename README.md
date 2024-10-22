@@ -1,4 +1,4 @@
-# Car_Price_Predictor
+# Car Price Predictor
 Project Workflow: Data Collection, Data Preprocessing, Model Development, Flask Application, Frontend Development!
 ## Frontend (HTML, CSS, Bootstrap):
 - Collects user inputs such as car make, model, year, fuel type, and kilometers driven.

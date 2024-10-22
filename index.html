@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Car Price Predictor</title>
+    <link rel="stylesheet" href="static/css/style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
+    <style>
+        body {
+            background-color: lightblue;
+            font-family: Arial, sans-serif;
+        }
+
+        .card-header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .card-body {
+            background-color: #ffffff;
+            border-radius: 0 0 10px 10px;
+        }
+
+        .form-control {
+            border: 2px solid #2c3e50;
+            border-radius: 20px;
+        }
+
+        .form-control:focus {
+            border-color: #2c3e50;
+            box-shadow: none;
+        }
+
+        .btn-primary {
+            background-color: #3498db;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 20px;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+
+        #prediction {
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h1 class="mb-0 text-center">Car Price Predictor</h1>
+                </div>
+                <div class="card-body">
+                    <h5 class="text-center">This app predicts the price of a car you want to sell. Try filling the details below:</h5>
+                    <form method="post" accept-charset="utf-8" name="Modelform">
+                        <div class="form-group">
+                            <label for="company">Select the company:</label>
+                            <select class="form-control" id="company" name="company" required="1" onchange="load_car_models(this.id,'car_models')">
+                                <!-- Populate options dynamically -->
+                                {% for company in companies %}
+                            <option value="{{ company }}">{{ company }}</option>
+                            {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="car_models">Select the model:</label>
+                            <select class="form-control" id="car_models" name="car_models" required="1">
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="year">Select Year of Purchase:</label>
+                            <select class="form-control" id="year" name="year" required="1">
+                                <!-- Populate options dynamically -->
+                                {% for year in years %}
+                            <option value="{{ year }}">{{ year }}</option>
+                            {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="fuel_type">Select the Fuel Type:</label>
+                            <select class="form-control" id="fuel_type" name="fuel_type" required="1">
+                                <!-- Populate options dynamically -->
+                                {% for fuel in fuel_types %}
+                            <option value="{{ fuel }}">{{ fuel }}</option>
+                            {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="kilo_driven">Enter the Number of Kilometres that the car has travelled:</label>
+                            <input type="text" class="form-control" id="kilo_driven" name="kilo_driven" placeholder="Enter the kilometres driven">
+                        </div>
+                        <div class="form-group">
+                            <button type="button" class="btn btn-primary form-control" onclick="send_data()">Predict Price</button>
+                        </div>
+                    </form>
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <h4><span id="prediction"></span></h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <br>
+</div>
+
+<script>
+
+    function load_car_models(company_id,car_model_id)
+    {
+        var company=document.getElementById(company_id);
+        var car_model= document.getElementById(car_model_id);
+        console.log(company.value);
+        car_model.value="";
+        car_model.innerHTML="";
+        {% for company in companies %}
+            if( company.value == "{{ company }}")
+            {
+                {% for model in car_models %}
+                    {% if company in model %}
+
+                        var newOption= document.createElement("option");
+                        newOption.value="{{ model }}";
+                        newOption.innerHTML="{{ model }}";
+                        car_model.options.add(newOption);
+                    {% endif %}
+                {% endfor %}
+            }
+        {% endfor %}
+    }
+
+    function form_handler(event) {
+        event.preventDefault(); // Don't submit the form normally
+    }
+    function send_data()
+    {
+        document.querySelector('form').addEventListener("submit",form_handler);
+
+        var fd=new FormData(document.querySelector('form'));
+
+        var xhr= new XMLHttpRequest({mozSystem: true});
+
+        xhr.open('POST','/predict',true);
+        document.getElementById('prediction').innerHTML="Wait! Predicting Price.....";
+        xhr.onreadystatechange = function(){
+            if(xhr.readyState == XMLHttpRequest.DONE){
+                document.getElementById('prediction').innerHTML="Prediction: ₹"+xhr.responseText;
+
+            }
+        };
+
+        xhr.onload= function(){};
+
+        xhr.send(fd);
+    }
+</script>
+
+</body>
+</html>
